@@ -110,12 +110,14 @@ public class SimpleShell {
                 // br.close();
 
 
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
 
             //catch ioexception, output appropriate message, resume waiting for input
-            catch (IOException e) {
-                System.out.println("Input Error, Please try again!");
-            }
+//            catch (IOException e) {
+//                System.out.println("Input Error, Please try again!");
+//            }
 //             So what, do you suppose, is the meaning of this comment?
             /** The steps are:
              * 1. parse the input to obtain the command and any parameters

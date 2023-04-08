@@ -1,5 +1,8 @@
+package controllers;
 import models.Id;
 //import spiffyUrlManipulator;
+
+import javax.json.JsonString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +13,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpRequest;
 
-import static jdk.internal.net.http.HttpRequestImpl.USER_AGENT;
 
 //import org.apache.http.HttpEntity;
 //import org.apache.http.HttpResponse;
@@ -19,23 +21,25 @@ import static jdk.internal.net.http.HttpRequestImpl.USER_AGENT;
 //import org.apache.http.entity.StringEntity;
 //import org.apache.http.impl.client.HttpClientBuilder;
 
-public class ServerController() {
+public class ServerController {
     private String rootURL = "http://zipcode.rocks:8085";
 
-    private ServerController svr = new ServerController();
+    private static ServerController svr = new ServerController();
 
     private ServerController() {}
 
-    public static shared() {
+
+    //static?
+    public static ServerController shared() {
         return svr;
     }
 
     //jsonstring?
-    public String idGet() throws IOException {
+    public JsonString idGet() throws IOException {
         URL obj = new URL("http://zipcode.rocks:8085/ids");
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setRequestProperty("User-Agent", null);
         int responseCode = con.getResponseCode();
         System.out.println("GET Response Code :: " + responseCode);
         StringBuffer response = null;
@@ -50,21 +54,21 @@ public class ServerController() {
             }
             in.close();
         }
-        return response.toString();
+        return null;
 
 
         // url -> /ids/
         // send the server a get with url
         // return json from server
     }
-    public String idPost(Id id) {
-        HttpRequest postRequest = HttpRequest.newBuilder()
-                .uri(new URI("http://zipcode.rocks:8085/ids"))
-                .header("first header", "api key")
-                .POST(BodyPublisher.ofString(""))
+    public JsonString idPost(Id id) {
+//        HttpRequest postRequest = HttpRequest.newBuilder()
+//                .uri(new URI("http://zipcode.rocks:8085/ids"))
+//                .header("first header", "api key")
+//                .POST(BodyPublisher.ofString(""))
 
 
-
+return null;
 
         // url -> /ids/
         // create json from Id
@@ -72,7 +76,8 @@ public class ServerController() {
         // reply
         // return json
     }
-    public String idPut(Id id) {
+    public JsonString idPut(Id id) {
+        return null;
         // url -> /ids/
     }
 
