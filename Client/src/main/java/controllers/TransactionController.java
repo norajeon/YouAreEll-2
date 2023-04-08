@@ -19,4 +19,7 @@ public class TransactionController {
         tid = idCtrl.postId(tid);
         return ("Id registered.");
     }
+
+    public String makecall(String s, String get, String s1) {
+    }
 }
