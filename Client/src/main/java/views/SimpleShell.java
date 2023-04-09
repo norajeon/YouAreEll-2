@@ -4,12 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 import controllers.IdController;
 import controllers.MessageController;
 import controllers.TransactionController;
+import models.Id;
+import models.Message;
 import youareell.YouAreEll;
 
 // Simple Shell is a Console view for youareell.YouAreEll.
@@ -17,13 +20,17 @@ public class SimpleShell {
 
 
     public static void prettyPrint(String output) {
+        String[] pretty = output.split(",");
         // yep, make an effort to format things nicely, eh?
-        System.out.println(output);
+        for (String p : pretty) {
+            System.out.println(p);
+        }
+//        System.out.println(output);
     }
     public static void main(String[] args) throws java.io.IOException {
 
         YouAreEll urll = new YouAreEll(new TransactionController(new MessageController(), new IdController()));
-        
+
         String commandLine;
         BufferedReader console = new BufferedReader
                 (new InputStreamReader(System.in));
@@ -39,7 +46,10 @@ public class SimpleShell {
 
             //input parsed into array of strings(command and arguments)
             String[] commands = commandLine.split(" ");
+            String[] message = commandLine.split("'");
             List<String> list = new ArrayList<String>();
+            List<String> msgList = new ArrayList<>();
+
 
             //if the user entered a return, just loop again
             if (commandLine.equals(""))
@@ -55,6 +65,10 @@ public class SimpleShell {
                 list.add(commands[i]);
 
             }
+//            for (int j = 0; j < commands.length; j++) {
+//                msgList.add(message[j]);
+//            }
+
             System.out.print(list); //***check to see if list was added correctly***
             history.addAll(list);
             try {
@@ -68,18 +82,31 @@ public class SimpleShell {
                 // Specific Commands.
 
                 // ids
-                if (list.contains("ids")) {
+                if (list.contains("ids") && list.size()==1) {
                     String results = urll.get_ids();
                     SimpleShell.prettyPrint(results);
                     continue;
                 }
 
                 // messages
-                if (list.contains("messages")) {
+                if (list.contains("messages")&& list.size()==1) {
                     String results = urll.get_messages();
                     SimpleShell.prettyPrint(results);
                     continue;
                 }
+
+                if(list.contains("messages") && list.size() == 2) {
+                    MessageController msg = new MessageController();
+                    ArrayList<Message> results= msg.getMessagesForId((new Id(" ", list.get(1))));
+                    SimpleShell.prettyPrint(results.toString());
+                }
+
+//                if(list.contains("ids") && list.size() > 1) {
+//                    MessageController msg = new MessageController();
+//                    Id fromID = list.get(1);
+//                    msg.postMessage();
+//                    //the msg would be msgList.get(1);
+//                }
                 // you need to add a bunch more.
 
                 //!! command returns the last command in history

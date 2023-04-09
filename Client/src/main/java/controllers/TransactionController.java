@@ -34,12 +34,18 @@ public class TransactionController {
     }
 
     public String makecall(String url, String get, String s1) {
-    if (url.contains("ids")) {
-       return idCtrl.getIds().toString();
-    }
-    else if (url.contains("messages")) {
-       return msgCtrl.getMessages().toString();
-    }
+        switch(get) {
+            case "GET":
+                if (url.contains("ids")) {
+                    return idCtrl.getIds().toString();
+                }
+                else if (url.contains("messages")) {
+                    return msgCtrl.getMessages().toString();
+                }
+            case "POST":
+                break;
+        }
+
 return null;
     }
 }
