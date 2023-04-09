@@ -97,9 +97,18 @@ public class SimpleShell {
 
                 if(list.contains("messages") && list.size() == 2) {
                     MessageController msg = new MessageController();
-                    ArrayList<Message> results= msg.getMessagesForId((new Id(" ", list.get(1))));
+                    ArrayList<Message> results = msg.getMessagesForId((new Id(" ", list.get(1))));
                     SimpleShell.prettyPrint(results.toString());
+                    continue;
                 }
+
+                if(list.contains("messages") && list.size() > 2) {
+                    MessageController msg = new MessageController();
+                    ArrayList<Message> results = msg.getMessagesFromFriend((new Id(" ", list.get(1))), new Id("", list.get(list.size()-1)));
+                    SimpleShell.prettyPrint(results.toString());
+                    continue;
+                }
+
 
 //                if(list.contains("ids") && list.size() > 1) {
 //                    MessageController msg = new MessageController();
