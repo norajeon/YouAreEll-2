@@ -124,6 +124,11 @@ public class SimpleShell {
                     Id myId = new Id("", list.get(1));
                     Id fromID = new Id("", list.get(list.size()-1));
                     Message ms = new Message(msgList.get(1), list.get(1), list.get(list.size()-1));
+
+                    if (msgList.size() == 2) {
+                        fromID.setGithub("");
+                        ms.setFromId("");
+                    }
                     Message result = msg.postMessage(myId, fromID, ms);
                     SimpleShell.prettyPrint(result.toString());
                     continue;
