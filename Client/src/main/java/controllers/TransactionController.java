@@ -1,51 +1,59 @@
 package controllers;
 
-import java.io.*;
-
 import models.Id;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 
 public class TransactionController {
     private String rootURL = "http://zipcode.rocks:8085";
     private MessageController msgCtrl;
     private IdController idCtrl;
-    private List<Id> id;
 
-    public TransactionController(MessageController m, IdController j) {
-        this.msgCtrl = m;
-        this.idCtrl = j;
-        this.id = new ArrayList<>();
+    public TransactionController(MessageController msgController, IdController idController) {
+        msgCtrl = msgController;
+        idCtrl = idController;
+    }
+
+    public MessageController getMsgCtrl() {return msgCtrl;}
+    public IdController getIdCtrl() {
+        return idCtrl;
     }
 
     public List<Id> getIds() {
-        return id;
+        return null;
     }
-    public String postId(String idtoRegister, String githubName) {
-        Id tid = new Id(idtoRegister, githubName);
+    public String postId(String idToRegister, String githubName) {
+        Id tid = new Id(idToRegister, githubName);
         tid = idCtrl.postId(tid);
         return ("Id registered.");
     }
 
-    public String makecall(String url, String get, String s1) {
-        switch(get) {
+    public String makeURLCall(String endPath, String httpMethod, String jsonStr) {
+        switch(httpMethod){
             case "GET":
-                if (url.contains("ids")) {
-                    return idCtrl.getIds().toString();
+                if(endPath.contains("ids")){
+                    ArrayList<Id> ids = idCtrl.getIds();
+                    return ids.toString();
+                } else if(endPath.contains("messages")){
+                    msgCtrl.getMessages();
                 }
-                else if (url.contains("messages")) {
-                    return msgCtrl.getMessages().toString();
-                }
+                break;
             case "POST":
+                if(endPath.contains("ids")){
+                    String[] idInfo = jsonStr.split(",");
+                    return idCtrl.postId(new Id(idInfo[0],idInfo[1])).toString();
+                } else if(endPath.contains("messages")){
+                    //msgCtrl.getMessages();
+                }
+                break;
+            default:
                 break;
         }
-
-return null;
+        return null;
     }
 }

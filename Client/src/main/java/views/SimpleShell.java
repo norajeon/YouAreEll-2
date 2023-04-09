@@ -28,6 +28,7 @@ public class SimpleShell {
 //        System.out.println(output);
     }
     public static void main(String[] args) throws java.io.IOException {
+        TransactionController transactionController = new TransactionController(new MessageController(), new IdController());
 
         YouAreEll urll = new YouAreEll(new TransactionController(new MessageController(), new IdController()));
 
@@ -90,6 +91,12 @@ public class SimpleShell {
                     continue;
                 }
 
+                if (list.contains("ids") && list.size()==3) {
+                    String results = urll.post_ids(list.get(1),list.get(2));
+                    SimpleShell.prettyPrint(results);
+                    continue;
+                }
+
                 // messages
                 if (list.contains("messages")&& list.size()==1) {
                     String results = urll.get_messages();
@@ -122,6 +129,9 @@ public class SimpleShell {
                     SimpleShell.prettyPrint(results.toString());
                     continue;
                 }
+
+                //send myID 'message' or
+                //send myID 'message' to 'friendID'
 
                 if(list.get(0).equals("send")) {
                     MessageController msg = new MessageController();

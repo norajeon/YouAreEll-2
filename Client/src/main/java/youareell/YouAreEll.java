@@ -9,12 +9,11 @@ import java.net.URL;
 
 public class YouAreEll {
 
-    TransactionController tt;
+    TransactionController transactionController;
     MessageController mm;
 
-    public YouAreEll (TransactionController t) {
-        this.tt = t;
-//        this.mm = m;
+    public YouAreEll (TransactionController transactionController) {
+        this.transactionController = transactionController;
     }
 
 //    public static void main(String[] args) {
@@ -42,13 +41,18 @@ public class YouAreEll {
 //    }
 
     public String get_ids() {
-        return tt.makecall("/ids", "GET", "");
+        return transactionController.makeURLCall("/ids", "GET", "");
     }
 
     public String get_messages() {
-        return tt.makecall("/messages", "GET", "");
+        return transactionController.makeURLCall("/messages", "GET", "");
     }
 
+
+    public String post_ids(String name, String github) {
+        String s = String.format("%s,%s",name,github);
+        return transactionController.makeURLCall("/ids", "POST", s);
+    }
 
 
 
