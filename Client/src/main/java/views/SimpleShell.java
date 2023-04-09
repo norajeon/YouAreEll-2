@@ -65,11 +65,13 @@ public class SimpleShell {
                 list.add(commands[i]);
 
             }
-//            for (int j = 0; j < commands.length; j++) {
-//                msgList.add(message[j]);
-//            }
 
-            System.out.print(list); //***check to see if list was added correctly***
+            for (int j = 0; j < message.length; j++) {
+                msgList.add(message[j]);
+            }
+
+//            System.out.println(msgList);
+//            System.out.println(list); //***check to see if list was added correctly***
             history.addAll(list);
             try {
                 //display history of shell with index
@@ -97,17 +99,36 @@ public class SimpleShell {
 
                 if(list.contains("messages") && list.size() == 2) {
                     MessageController msg = new MessageController();
-                    ArrayList<Message> results = msg.getMessagesForId((new Id(" ", list.get(1))));
+                    ArrayList<Message> results;
+                    results = msg.getMessagesForId((new Id(" ", list.get(1))));
                     SimpleShell.prettyPrint(results.toString());
                     continue;
                 }
 
+                //does not work for sequence
                 if(list.contains("messages") && list.size() > 2) {
                     MessageController msg = new MessageController();
-                    ArrayList<Message> results = msg.getMessagesFromFriend((new Id(" ", list.get(1))), new Id("", list.get(list.size()-1)));
+                    ArrayList<Message> results;
+                    if (list.get(1).equals("seq")) {
+                        Message res = msg.getMessageForSequence(list.get(2));
+                        SimpleShell.prettyPrint(res.toString());
+                        continue;
+                    }
+                    results = msg.getMessagesFromFriend((new Id(" ", list.get(1))), new Id("", list.get(list.size()-1)));
                     SimpleShell.prettyPrint(results.toString());
                     continue;
                 }
+
+                if(list.get(0).equals("send")) {
+                    MessageController msg = new MessageController();
+                    Id myId = new Id("", list.get(1));
+                    Id fromID = new Id("", list.get(list.size()-1));
+                    Message ms = new Message(msgList.get(1), list.get(1), list.get(list.size()-1));
+                    Message result = msg.postMessage(myId, fromID, ms);
+                    SimpleShell.prettyPrint(result.toString());
+                    continue;
+                }
+
 
 
 //                if(list.contains("ids") && list.size() > 1) {

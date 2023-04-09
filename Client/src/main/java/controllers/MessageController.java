@@ -32,6 +32,12 @@ public class MessageController {
     }
 
     public static void main(String[] args) {
+//MessageController abc = new MessageController();
+//
+//        Id myId = new Id("", "a");
+//        Id fromID = new Id("", "b");
+//        Message ms = new Message("fdsafdsag", "d", "c");
+//abc.postMessage(myId, fromID, ms);
 
 
     }
@@ -80,6 +86,12 @@ public class MessageController {
 
 
     public Message getMessageForSequence(String seq) {
+        ArrayList<Message> idMessages = getMessages();
+        for (Message m : idMessages) {
+            if(seq.equals(m.getSeqId())) {
+                return m;
+            }
+        }
         return null;
     }
     public ArrayList<Message> getMessagesFromFriend(Id myId, Id friendId) {
@@ -88,56 +100,35 @@ public class MessageController {
         return idMessages;
     }
 
-//    private static HttpRequest.BodyPublisher buildFormDataFromMap(Map<String, Object> mappy) {
-//        StringBuilder builder = new StringBuilder();
-//        for (Map.Entry<String, Object> entry : mappy.entrySet()) {
-//            if (builder.length() > 0) {
-//                builder.append(":");
-//            }
-//            builder.append(URLEncoder.encode(entry.getKey().toString()));
-//            builder.append(" : ");
-//            builder.append(URLEncoder.encode(entry.getValue().toString()));
-//        }
-//        return HttpRequest.BodyPublishers.ofString(builder.toString());
-//    }
 
-//    public Message postMessage(Id myId, Id toId, Message msg){
-////        String jsonString = String.format("{\"fromId\" :  %s, ))")};
-////        HttpRequest request = HttpRequest.newBuilder()
-////                .uri(URI.create("http://zipcode.rocks:8085/messages"))
-////                .method("POST", HttpRequest.BodyPublishers.ofString(jsonString))
-////                .build();
-//
-//
-////        String fromid = String.valueOf(myId);
-////        String toID = String.valueOf(toId);
-////        String message = String.valueOf(msg);
-////        Map<String, Object> mappy = new HashMap<>();
-////        mappy.put("fromid", myId);
-////        mappy.put("toid", toId);
-////        mappy.put("message", msg);
-//
-//        HttpClient client = HttpClient.newHttpClient();
-////
-////        HttpRequest request = HttpRequest.newBuilder()
-////                .POST(buildFormDataFromMap(mappy))
-////                .uri(URI.create("http://zipcode.rocks:8085/messages"))
-//////                .method("POST", HttpRequest.BodyPublishers.noBody())
-////                .build();
-//        HttpResponse<String> response = null;
-//        try {
-//            response = client.send(request, HttpResponse.BodyHandlers.ofString());;
-//            JSONObject json = new JSONObject();
-//            String a = json.getString("message");
-//            String b = json.getString("fromid");
-//            String c = json.getString("toid");
-//            Message result = new Message(b, c, a);
-//            return result;
-//
-//        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+
+  public Message postMessage(Id myId, Id toId, Message msg){
+        String jsonString = String.format("{\"sequence\" : \"%s\",\"timestamp\" : \"%s\",\"fromid\" : \"%s\",\"toid\" : \"%s\",\"message\" : \"%s\"}", msg.getSeqId(), msg.getTimestamp(), myId.getGithub(), toId.getGithub(), msg.getMessage());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://zipcode.rocks:8085/ids/" + myId.getGithub() + "/messages"))
+                .method("POST", HttpRequest.BodyPublishers.ofString(jsonString))
+                .build();
+
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpResponse<String> response = null;
+        try {
+
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            JSONObject json = new JSONObject(response.body());
+            String seq = json.getString("sequence");
+            String timestamp = json.getString("timestamp");
+            String from = json.getString("fromid");
+            String to = json.getString("toid");
+            String mesg = json.getString("message");
+            Message result = new Message(mesg, from, to);
+//            System.out.println(response.body());
+            return result;
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
