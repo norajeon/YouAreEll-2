@@ -97,6 +97,7 @@ public class SimpleShell {
                     continue;
                 }
 
+                //messagesforID: messages foruserID
                 if(list.contains("messages") && list.size() == 2) {
                     MessageController msg = new MessageController();
                     ArrayList<Message> results;
@@ -105,12 +106,15 @@ public class SimpleShell {
                     continue;
                 }
 
-                //does not work for sequence
+                //sequence: messages userID seq seq#
+                //messagesFromFriend: messages myId to FriendId
+
                 if(list.contains("messages") && list.size() > 2) {
                     MessageController msg = new MessageController();
                     ArrayList<Message> results;
-                    if (list.get(1).equals("seq")) {
-                        Message res = msg.getMessageForSequence(list.get(2));
+                    if (list.get(2).equals("seq")) {
+                        Id myId = new Id("", list.get(1));
+                        Message res = msg.getMessageForSequence(list.get(3), myId);
                         SimpleShell.prettyPrint(res.toString());
                         continue;
                     }

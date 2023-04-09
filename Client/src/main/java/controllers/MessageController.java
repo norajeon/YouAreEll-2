@@ -79,30 +79,77 @@ public class MessageController {
 
 
     public ArrayList<Message> getMessagesForId(Id idFor) {
-            ArrayList<Message> idMessages = getMessages();
-            idMessages.removeIf(m -> !m.getFromId().equals(idFor.getGithub()));
-            return idMessages;
+        String urlString = String.format(
+                "http://zipcode.rocks:8085/ids/%s/messages", idFor.getGithub());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlString))
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = null;
+        try {
+            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            String result = response.body();
+            ArrayList<Message> res = parse(result);
+            return res;
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+
+        }
+
+
+//        ArrayList<Message> idMessages = getMessages();
+//        idMessages.removeIf(m -> !m.getFromId().equals(idFor.getGithub()));
+        return null;
     }
 
 
-    public Message getMessageForSequence(String seq) {
-        ArrayList<Message> idMessages = getMessages();
-        for (Message m : idMessages) {
-            if(seq.equals(m.getSeqId())) {
-                return m;
-            }
+    public Message getMessageForSequence(String seq, Id myID) {
+        String urlString = String.format(
+                "http://zipcode.rocks:8085/ids/%s/messages/%s" , myID.getGithub(), seq);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlString))
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = null;
+        try {
+            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            JSONObject json = new JSONObject(response.body());
+            String from = json.getString("fromid");
+            String to = json.getString("toid");
+            String mesg = json.getString("message");
+            Message result = new Message(mesg, from, to);
+            return result;
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
+
         return null;
     }
     public ArrayList<Message> getMessagesFromFriend(Id myId, Id friendId) {
-        ArrayList<Message> idMessages = getMessages();
-        idMessages.removeIf(m -> !m.getFromId().equals(friendId.getGithub()) && !m.getToId().equals(myId.getGithub()));
-        return idMessages;
+        String urlString = String.format(
+                "http://zipcode.rocks:8085/ids/%s/from/%s", myId.getGithub(), friendId.getGithub());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlString))
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = null;
+        try {
+            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            String result = response.body();
+            ArrayList<Message> res = parse(result);
+            return res;
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+
+        }
+        return null;
+
     }
 
-
-
-  public Message postMessage(Id myId, Id toId, Message msg){
+    public Message postMessage(Id myId, Id toId, Message msg){
         String jsonString = String.format("{\"sequence\" : \"%s\",\"timestamp\" : \"%s\",\"fromid\" : \"%s\",\"toid\" : \"%s\",\"message\" : \"%s\"}", msg.getSeqId(), msg.getTimestamp(), myId.getGithub(), toId.getGithub(), msg.getMessage());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://zipcode.rocks:8085/ids/" + myId.getGithub() + "/messages"))
@@ -122,7 +169,6 @@ public class MessageController {
             String to = json.getString("toid");
             String mesg = json.getString("message");
             Message result = new Message(mesg, from, to);
-//            System.out.println(response.body());
             return result;
 
         } catch (IOException | InterruptedException e) {
