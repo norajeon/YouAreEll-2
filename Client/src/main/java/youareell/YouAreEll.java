@@ -27,11 +27,11 @@ public class YouAreEll {
         System.out.println(urlhandler.MakeURLCall("/messages", "GET", ""));
     }
 
-    private String MakeURLCall(String s, String get, String s1) {
+    private String MakeURLCall(String web, String method, String message) {
         try {
-            URL url = new URL("http://zipcode.rocks:8085/ids");
+            URL url = new URL(web);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
+            con.setRequestMethod(method);
 //            con.set
 
         } catch (IOException e) {
@@ -46,7 +46,7 @@ public class YouAreEll {
     }
 
     public String get_messages() {
-        return MakeURLCall("/messages", "GET", "");
+        return tt.makecall("/messages", "GET", "");
     }
 
 
